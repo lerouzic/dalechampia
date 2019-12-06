@@ -97,6 +97,6 @@ maketable2 <- function(dat, CI.method=c("none", "vcov", "profile")[1]) {
 }
 
 cat("Tovar\n", file="table2.txt")
-write.table(maketable2(summarypop("data/TovarData-summary.txt"), CI.method="vcov"), file="table2.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
+write.table(maketable2(summarypop("data/TovarData.txt"), CI.method="vcov"), file="table2.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
 cat("Tulum\n", file="table2.txt", append=TRUE)
-write.table(maketable2(summarypop("data/TulumData-summary.txt"), CI.method="vcov"), file="table2.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
+write.table(maketable2(summarypop("data/TulumData.txt"), CI.method="vcov"), file="table2.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")

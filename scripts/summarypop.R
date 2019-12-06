@@ -1,3 +1,5 @@
+library(plyr) # to compute summary data
+
 summarypop <- function(file) { 
 	# A few helper functions
 	ddtapply <- function(x, FUN=mean, ...) {
@@ -21,7 +23,11 @@ summarypop <- function(file) {
 		c(tt.up[1:5], tt.do[6:10], tt[11:15])
 	}
 	
-	dd <- read.table(file, header=TRUE)
+	dd.raw <- read.table(file, header=TRUE)
+	# from Elena, turnng the raw data.frame into summary data.frame
+	dd <- ddply(dd.raw, .(ind, Line, Gener, GenLine, dam, sire, SEL), summarize, logGA=mean(logGA), logBA=mean(logUBA))
+	
+	
 	# individual means (to be removed when the data file will be cleaned)
 	ddind <-  do.call(rbind, by(dd, as.factor(dd$ind), function(xx) as.data.frame(lapply(xx, function(xxx) if (is.numeric(xxx)) mean(xxx, na.rm=TRUE) else xxx[1]))))
 	

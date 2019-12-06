@@ -37,8 +37,8 @@ format.table <- function(df, digits=2) {
 	mm
 }
 
-tovar.df <- summarypop(paste(datadir, "TovarData-summary.txt", sep="/"))
-tulum.df <- summarypop(paste(datadir, "TulumData-summary.txt", sep="/"))
+tovar.df <- summarypop(paste(datadir, "TovarData.txt", sep="/"))
+tulum.df <- summarypop(paste(datadir, "TulumData.txt", sep="/"))
 
 cat("\tUp-selected lines\t\tDown-selected lines\t\tControl\t\n", file="table3.txt")
 cat("\tβ (±SE)\tr (95% CI)\tβ (±SE)\tr (95% CI)\tβ (±SE)\tr (95% CI)\n", file="table3.txt", append=TRUE)

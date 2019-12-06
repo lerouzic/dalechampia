@@ -10,8 +10,8 @@ source("scripts/Gmatrices.R")
 tovar.mat <- get.matrices("Tovar")
 tulum.mat <- get.matrices("Tulum")
 
-tovar <- summarypop("data/TovarData-summary.txt")
-tulum <- summarypop("data/TulumData-summary.txt")
+tovar <- summarypop("data/TovarData.txt")
+tulum <- summarypop("data/TulumData.txt")
 
 
 
