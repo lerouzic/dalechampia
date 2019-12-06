@@ -23,8 +23,8 @@ formatTable <- function(df, digits=3) {
 	)
 }
 
-tovar.df <- summarypop(paste(datadir, "TovarData.txt", sep="/"))
-tulum.df <- summarypop(paste(datadir, "TulumData.txt", sep="/"))
+tovar.df <- summarypop(paste(datadir, "TovarData-summary.txt", sep="/"))
+tulum.df <- summarypop(paste(datadir, "TulumData-summary.txt", sep="/"))
 
 write.table(formatTable(tovar.df), file="tableS1.txt", quote=FALSE, sep="\t", na="-")
 write.table(formatTable(tulum.df), file="tableS2.txt", quote=FALSE, sep="\t", na="-")
