@@ -5,7 +5,7 @@
 source("scripts/Gmatrices.R", chdir=TRUE)
 
 dd <- 2 # number of digits for rounding
-mf <- 1/100 # multiplicaton factor
+mf <- 100 # multiplicaton factor
 
 tovar <- get.matrices("Tovar")
 tulum <- get.matrices("Tulum")
