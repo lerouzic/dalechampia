@@ -47,7 +47,7 @@ format.table <- function(slopes, cors, digits=2) {
 	rr <- paste0(format(round(cors[,1], digits=digits), nsmall=digits), " (", format(round(cors[,2],digits=digits), nsmall=digits), "; ", format(round(cors[,3],digits=digits), nsmall=digits), ")")
 	
 	mm <- cbind(bb[1:5], rr[1:5], bb[6:10], rr[6:10], bb[11:15], rr[11:15])
-	rownames(mm) <- c("Parents", paste0("F", 1:4))
+	rownames(mm) <- as.character(1:5) # c("Parents", paste0("F", 1:4))
 	mm
 }
 
