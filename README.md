@@ -18,6 +18,7 @@ The table presents, for each generation, in all three lines (Up, Down, Control) 
 **Note:** Why is the slope calculated on log traits and the correlation on the original scale? This is the only place in the full manuscript where traits are not logged. Is it a mistake, or is there a reason for this? 
 
 ## Figures 2 and 3
+**Status: reproducible.**  
 Observed vs predicted selection response for focal (up) and correlated (down) traits, and for Tovar (left) and Tulum (right) populations. Figure 2 is up-down centered, while figure 3 is control-centered. Centering affects mean phenotype, phenotypic standard errors, and prediction errors. The formula for prediction error is a bit complicated, described in table S9 below. 
 
 ## Table S1 and Table S2
@@ -28,6 +29,40 @@ The effect of selection on variance (difference between the variance among breed
 
 ## Figure S8
 Selection response and predictions on the original (log) scale. The figure is built in the same way as figures 2 and 3. 
+**Status: reproducible.**  
 
 ## Table S9
 Prediction uncertainties. Below is the detailed setting used to draw figures 2, 3, and S8. 
+
+### General setting
+* Environmental uncertainty: every generation, there is an independent environmental variance Ve on each individual measurement, leading to a variance error on the mean of Ve/N
+* Initial genetic uncertainty: due to the initial sampling effect, the initial genetic mean is affected by an error of Va/N
+* Genetic drift: as detailed in Appendix S4, in the current setting, genetic drift contributes to the error variance by an extra Va(1/Np - 1/2N) every generation. 
+* Uncertainty on Va: the estimate of Va from the diallel is affected by a variance Var(Va). This does not affect the error variance in the control line, assuming that the error is symmetrical, but it affects the selected line by a factor Var(Va) t^2 beta^2. 
+
+**Note**: for error variance calculations, the selection gradient beta was averaged (in absolute value) among up/down lines and across generations.  
+It was considered that N=64 and Np=12 in all lines and populations.  
+In the following, Va is used for the additive genetic variance on the current trait (GA or UBA), and Wa on the selected trait (GA). When considering GA, Wa = Va. When considering UBA, Wa = G(GA, UBA) (off-diagonal element of the G matrix)
+
+### Raw data
+* Control line: the error at generation t (t=1 is the starting generation) is Vc(t) = Ve/N + Va(1/N + (t-1)(1/Np-1/2N))
+* Selected lines: the error is Vs(t) = Vc(t) + Var(Wa) (t-1)^2 beta^2
+
+### Control-centered data
+* By definition, there is no variance on the control line. All the error is reported in the selected lines:
+* Control line : error = 0
+* Selected lines: error = Vc(t) + Vs(t)
+
+### Up-down centered data
+* Now the variance is redistributed in all lines. Not straightforward, as drift is independent in both selected lines, but the error on the additive variance is the same. 
+* Control line, error = Vc(t) + Vc(t)/2 (affected by the drift in the selected lines, but not by the other term, because the error on the additive variance is the same in both up and down lines)
+* Selected lines: error = Vc(t)/2 + Var(Wa) (t-1)^2 beta^2
+
+**Note**: a similar (but simpler) calculation had to be made as well to display proper phenotypic standard errors. 
+
+**Note**: The previous setting is not entirely clear. I am still quite confused about what we want to plot here. There are several "kinds" of uncertainties. 
+* The variance we would get if we were replicating the experiment in independent lines derived from the same initial population. This is **not** what is calculated here, as we should account for sampling error in the selection gradients (the variance would be larger than on the figures). 
+* The variance we would get by picking exactly the same individuals, mating them in the same pattern, and obtaining the same genotypes as offspring. This would account for environmental variance only, and the variance would be smaller than on the figures. 
+* The variance we would get by replicating the reproduction procedure every generation (e.g. by generating much more offspring than necessary), cumulating this error every generation, but discarding all extra offspring and keeping only the "real" ones. This is not too far from what is plotted in the figures, except that in this interpretation the variance at the first generation should be zero. 
+
+To make it clearer, I have no idea about the empirical meaning of the variances we are showing here. It does not correspond to anything that could be measured empirically, because it is calculated conditional to the genotypes and phenotypes from the previous generation, except at generation 1 which is a random sample from the diallel population. The situation of the controls is even more confusing, as it is unclear whether they should drift according to 1/Np - 1/2N (the same situation as selected individuals, which are conditioned on an exact set of Np parents), or according to 1/2Np (random mating?). 
