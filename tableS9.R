@@ -1,38 +1,35 @@
 #!/usr/bin/env Rscript
 
 source("scripts/plotpredict.R")
+source("scripts/summarypop.R")
 
 
-source("data/matrices.R") # G, P, and Gv matrices
-tovar <- read.table("data/tovar.txt", header=TRUE, na.strings="-")
-tulum <- read.table("data/tulum.txt", header=TRUE, na.strings="-")
-
-# Tovar, GA
-toga <- cbind(
-	plot.raw(tovar, G.tovar, Gv.tovar, P.tovar, verr.only=TRUE), 
-	vControl=plot.control(tovar, G.tovar, Gv.tovar, P.tovar, verr.only=TRUE)$Vtot, 
-	Vselect=plot.updown(tovar, G.tovar, Gv.tovar, P.tovar, verr.only=TRUE)$Vtot)
-write.table(toga, "tableS8-TovGA.txt", quote=FALSE, sep="\t", row.names=FALSE)
+source("scripts/Gmatrices.R")
 
 
-# Tovar, UBA
-touba <- cbind(
-	plot.raw(tovar, G.tovar, Gv.tovar, P.tovar, target="mu.y", verr.only=TRUE), 
-	vControl=plot.control(tovar, G.tovar, Gv.tovar, P.tovar, target="mu.y", verr.only=TRUE)$Vtot, 
-	Vselect=plot.updown(tovar, G.tovar, Gv.tovar, P.tovar, target="mu.y", verr.only=TRUE)$Vtot)
-write.table(touba, "tableS8-TovUBA.txt", quote=FALSE, sep="\t", row.names=FALSE)
+tovar.mat <- get.matrices("Tovar")
+tulum.mat <- get.matrices("Tulum")
 
-# Tulum, GA
-tuga <- cbind(
-	plot.raw(tulum, G.tulum, Gv.tulum, P.tulum, verr.only=TRUE), 
-	vControl=plot.control(tulum, G.tulum, Gv.tulum, P.tulum, verr.only=TRUE)$Vtot, 
-	Vselect=plot.updown(tulum, G.tulum, Gv.tulum, P.tulum, verr.only=TRUE)$Vtot)
-write.table(tuga, "tableS8-TulGA.txt", quote=FALSE, sep="\t", row.names=FALSE)
+tovar <- summarypop("data/TovarData.txt")
+tulum <- summarypop("data/TulumData.txt")
 
+data.recenter.tovar.GA <- recenter(tovar, G=tovar.mat$G, Gv=tovar.mat$Gv, P=tovar.mat$P, N=64, Np=12, target="mu.x", normalization="raw")
+data.recenter.tovar.UBA <- recenter(tovar, G=tovar.mat$G, Gv=tovar.mat$Gv, P=tovar.mat$P, N=64, Np=12, target="mu.y", normalization="raw")
+data.recenter.tulum.GA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.x", normalization="raw")
+data.recenter.tulum.UBA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.y", normalization="raw")
 
-# Tulum, UBA
-tuuba <- cbind(
-	plot.raw(tulum, G.tulum, Gv.tulum, P.tulum, target="mu.y", verr.only=TRUE), 
-	vControl=plot.control(tulum, G.tulum, Gv.tulum, P.tulum, target="mu.y", verr.only=TRUE)$Vtot, 
-	Vselect=plot.updown(tulum, G.tulum, Gv.tulum, P.tulum, target="mu.y", verr.only=TRUE)$Vtot)
-write.table(tuuba, "tableS8-tulUBA.txt", quote=FALSE, sep="\t", row.names=FALSE)
+tab.tovar.GA <- data.frame('GA:V(sel)'=data.recenter.tovar.GA$va, 'GA:V(drift)'=data.recenter.tovar.GA$drift, 'GA:V(env)'=data.recenter.tovar.GA$env)
+tab.tovar.UBA <- data.frame('UBA:V(sel)'=data.recenter.tovar.UBA$va, 'UBA:V(drift)'=data.recenter.tovar.UBA$drift, 'UBA:V(env)'=data.recenter.tovar.UBA$env)
+tab.tulum.GA <- data.frame('GA:V(sel)'=data.recenter.tulum.GA$va, 'GA:V(drift)'=data.recenter.tulum.GA$drift, 'GA:V(env)'=data.recenter.tulum.GA$env)
+tab.tulum.UBA <- data.frame('UBA:V(sel)'=data.recenter.tulum.UBA$va, 'UBA:V(drift)'=data.recenter.tulum.UBA$drift, 'UBA:V(env)'=data.recenter.tulum.UBA$env)
+
+rownames(tab.tovar.GA) <- rownames(tab.tovar.UBA) <- rownames(tab.tulum.GA) <- rownames(tab.tulum.UBA) <- 0:4
+
+ts9 <- "tableS9.txt"
+mult <- 10000
+digits <- 2
+
+cat("Var x ", mult, "\nTovar\n", file=ts9)
+write.table(format(round(mult*cbind(tab.tovar.GA, tab.tovar.UBA),digits=digits), nsmall=digits), sep="\t", quote=FALSE, file=ts9, append=TRUE)
+cat("Tulum\n", file=ts9, append=TRUE)
+write.table(format(round(mult*cbind(tab.tulum.GA, tab.tulum.UBA), digits=digits), nsmall=digits), sep="\t", quote=FALSE, file=ts9, append=TRUE)
