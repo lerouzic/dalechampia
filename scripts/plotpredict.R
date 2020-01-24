@@ -97,19 +97,19 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 	#         but not for selected lines. A term in Var(Va) * t^2 * beta^2 needs to be considered.
 	#         this error cumulates (quadratically) ver generations
 	
-	verr.drift.control <- Eerr/N + Gdrift*(1/N + (gen-1)*(1/N))
-	verr.drift.sel     <- Eerr/N + Gdrift*(1/N + (gen-1)*(1/Np - 1/(2*N)))
-	verr.va.sel        <- Gerr * (gen-1)^2 * mean.beta^2
+	verr.drift     <- Gdrift*(gen-1)*(1/Np - 1/(2*N))
+	verr.va        <- Gerr * (gen-1)^2 * mean.beta^2
+	verr.env       <- Eerr/N
 	
 	# If the data is control or up-down centered, the error variance is redistributed:
 	verr.control <-
-		if (normalization == "raw") { verr.drift.control }
+		if (normalization == "raw") { verr.drift + verr.env }
 		else if (normalization == "control") { rep(0, length(gen)) }
-		else if (normalization == "updown") { verr.drift.control + verr.drift.sel/2 }
+		else if (normalization == "updown") { 1.5*verr.drift + 1.5*verr.env }
 	verr.sel     <-
-		if (normalization == "raw") { verr.drift.sel + verr.va.sel }
-		else if (normalization == "control") { verr.drift.sel + verr.va.sel + verr.drift.control }
-		else if (normalization == "updown") { verr.drift.sel/2 + verr.va.sel }
+		if (normalization == "raw") { verr.drift + verr.va + verr.env }
+		else if (normalization == "control") { 2*verr.drift + verr.va + 2*verr.env }
+		else if (normalization == "updown") { 0.5*verr.drift + verr.va + 0.5*verr.env }
 
 	phen.control <-
 		if (normalization == "raw") { data[data$Rep=="Control",target] }
@@ -139,6 +139,9 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 
 	
 	return(list(
+		drift   = verr.drift, 
+		va      = verr.va,
+		env     = verr.env,
 		Control = data.frame(gen=gen, pred=pred.control, phen=phen.control, se=se.control, verr=verr.control),
 		Up      = data.frame(gen=gen, pred=pred.up,      phen=phen.up,      se=se.up,      verr=verr.sel),
 		Down    = data.frame(gen=gen, pred=pred.down,    phen=phen.down,    se=se.down,    verr=verr.sel)))
@@ -152,7 +155,7 @@ plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="b
 		ylim <- 0.2*c(-1,1) + range(do.call(c, lapply(data.recenter, function(x) x$phen)), na.rm=TRUE)
 
 	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=ylab, ...)
-	for (ll in names(data.recenter)) {
+	for (ll in c("Control","Up","Down")) {
 		plot.ts.common(data.recenter[[ll]]$pred, data.recenter[[ll]]$gen, data.recenter[[ll]]$verr, data.recenter[[ll]]$phen, data.recenter[[ll]]$se, CI.factor=CI.factor, col.line=col.data[ll])
 	}
 }
