@@ -15,7 +15,7 @@ tulum <- summarypop("data/TulumData.txt")
 
 CI.factor <- 2
 
-pdf("figure2.pdf", width=8, height=8)
+pdf("figure2.pdf", width=8, height=8, useDingbats = FALSE)
 layout(cbind(1:2,3:4))
 par(mar=c(3, 4.2, 3, 1))
 plot.data.recenter(
