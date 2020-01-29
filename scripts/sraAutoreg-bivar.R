@@ -258,48 +258,41 @@ sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A))
 	# Produces a theoretical time series from a set of parameters, and selection strengths (selection on the means --beta--
 	# and the variances --delta--)
 {
-	# Model 1: consider that betaB=0, and remove varA.B from the model
+	# The model considers that betaB=0, and does not need the additive genetic variance for trait B
     ans <- list()
         
     Ne <- exp(logNe)
 
     mu.A <- mu0.A
     mu.B <- mu0.B
+    
     d.A <- 0
-    d.B <- 0
-    vara.A <- exp(logvarA0.A) 
-#~     vara.B <- exp(logvarA0.B)
-    varA.A <- vara.A + d.A
-#~     varA.B <- vara.B + d.B
+    vara.A <- exp(logvarA0.A)  # Genic variance
+    varA.A <- vara.A + d.A     # Genetic variance (accounting for linkage disequilibrium)
+    covarA <- covarA0.AB
+        
     varE.A <- exp(logvarE0.A)
     varE.B <- exp(logvarE0.B) 
-    covarA <- covarA0.AB
-    
+
     for (t in 1:(length(beta.A)))
     {
         # Lande's equations
-        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t]) # + covarA[t]*beta.B[t])
+        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t]) # + covarA[t] * beta.B[t] : assuming beta.B = 0
         mu.B <- c(mu.B, mu.B[t] + covarA[t] * beta.A[t]) # + varA.B[t] * beta.B[t]
     
-		vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
-#~ 			vara.B.tp1 <- vara.B[t] * (1 - 1/(2*Ne))
+        vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
-#~         d.B.tp1 <- 0.5*(1-1/Ne)*(d.B[t]+delta.B[t]*(varA.B[t]**2)/(varA.B[t]+varE.B[t]))
-        
         varA.A.tp1 <- vara.A.tp1 + d.A.tp1
-#~         varA.B.tp1 <- vara.B.tp1 + d.B.tp1
-        varE.A.tp1 <- varE.A[t]
-        varE.B.tp1 <- varE.B[t]
         covarA.tp1 <- covarA[t]
         
+        varE.A.tp1 <- varE.A[t]
+        varE.B.tp1 <- varE.B[t]
+
+        # To make the exploration of the likelihood surface more robust: handle infinite, zero, or 1/0 variances
         if (is.nan(varA.A.tp1) || is.infinite(varA.A.tp1) || is.na(varA.A.tp1)) 
             {varA.A.tp1 <- 0}
-#~         if (is.nan(varA.B.tp1) || is.infinite(varA.B.tp1)) 
-#~             {varA.B.tp1 <- 0}            
         if (varA.A.tp1 < 0)
             {varA.A.tp1 <- 0}
-#~         if (varA.B.tp1 < 0)
-#~             {varA.B.tp1 <- 0}            
         if (is.nan(varE.A.tp1) || is.infinite(varE.A.tp1))
             {varE.A.tp1 <- 0} 
         if (is.nan(varE.B.tp1) || is.infinite(varE.B.tp1))
@@ -310,13 +303,8 @@ sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A))
             {varE.B.tp1 <- 0 } 
         
         vara.A <- c(vara.A, vara.A.tp1)
-#~         vara.B <- c(vara.B, vara.B.tp1)
         d.A <- c(d.A, d.A.tp1)
-#~         d.B <- c(d.B, d.B.tp1)
-        
         varA.A <- c(varA.A, varA.A.tp1)
-#~         varA.B <- c(varA.B, varA.B.tp1)
-        
         covarA <- c(covarA, covarA.tp1)
         
         varE.A <- c(varE.A, varE.A.tp1)
@@ -374,7 +362,7 @@ sraCstvar.bivar <-function (sradata, start = NULL, fixed = NULL,
 sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A)), delta.B = rep(0, length(beta.B)), 
 	mu0.A=0, mu0.B=0, logvarA0.A.pos=0, logvarA0.A.neg=0,
 	logvarE0.A=0, logvarE0.B=0, covarA0.AB.pos=0, covarA0.AB.neg=0, logNe=log(100))
-{
+{   # Almost the same than for symmetric response, the difference lies in the initial parameter names
     ans <- list()
     
     Ne <- exp(logNe)
@@ -382,7 +370,6 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
     mu.A <- mu0.A
     mu.B <- mu0.B
     d.A <- 0
-    d.B <- 0
     vara.A <- if (beta.A[1] > 0) exp(logvarA0.A.pos) else exp(logvarA0.A.neg) 
     varA.A <- vara.A + d.A
     varE.A <- exp(logvarE0.A)
@@ -392,16 +379,17 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
     for (t in 1:(length(beta.A)))
     {
         # Lande's equations
-        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t]) # + covarA[t]*beta.B[t])
-        mu.B <- c(mu.B, mu.B[t] + covarA[t] * beta.A[t]) # + varA.B[t] * beta.B[t]
+        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t])
+        mu.B <- c(mu.B, mu.B[t] + covarA[t] * beta.A[t])
     
 		vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
-        
+        covarA.tp1 <- covarA[t]
+                
         varA.A.tp1 <- vara.A.tp1 + d.A.tp1
         varE.A.tp1 <- varE.A[t]
         varE.B.tp1 <- varE.B[t]
-        covarA.tp1 <- covarA[t]
+
         
         if (is.nan(varA.A.tp1) || is.infinite(varA.A.tp1)) 
             {varA.A.tp1 <- 0}           
@@ -418,9 +406,7 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
         
         vara.A <- c(vara.A, vara.A.tp1)
         d.A <- c(d.A, d.A.tp1)
-        
         varA.A <- c(varA.A, varA.A.tp1)
-        
         covarA <- c(covarA, covarA.tp1)
         
         varE.A <- c(varE.A, varE.A.tp1)
