@@ -48,6 +48,8 @@ Selection response and predictions on the original (log) scale. The figure is bu
 
 Prediction uncertainties, corresponding to the shaded areas in figures 2, 3, and S8. 
 
+**Status: reproducible**
+
 ### General setting
 
 Equation (7) in the main text features three sources of uncertainty:
