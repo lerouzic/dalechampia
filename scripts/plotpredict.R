@@ -90,8 +90,8 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 		else if (normalization == "updown") { verr.drift + 0.5*verr.drift.sel + 1.5*verr.env }
 	verr.sel     <-
 		if (normalization == "raw") { verr.drift.sel + verr.va + verr.env }
-		else if (normalization == "control") { 2*verr.drift + verr.va + 2*verr.env }
-		else if (normalization == "updown") { 0.5*verr.drift + verr.va + 0.5*verr.env }
+		else if (normalization == "control") { verr.drift + verr.drift.sel + verr.va + 2*verr.env }
+		else if (normalization == "updown") { 0.5*verr.drift.sel + verr.va + 0.5*verr.env }
 
 	# Scaling the phenotype
 	phen.control <-
