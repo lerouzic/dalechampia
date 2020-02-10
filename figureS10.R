@@ -56,7 +56,6 @@ makesradata <- function(dat, centering=c("raw","control", "updown")[1], exclude.
 }
 
 makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", col.control="blue", xylim=c(-6.5,-4), xlab="log var(up)", ylab="log var(down)", legend=TRUE) {
-	# Some duplcated code with maketable2? 
 	
 	dataraw <- makesradata(dat, centering="raw")
 	datacontrol <- makesradata(dat, centering="control")
@@ -65,14 +64,15 @@ makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", 
 		param.sra <- "logvarA0.A"
 		param.mcmc <- "logGA:logGA.animal"
 	} else if (what == "cov") {
-		param.sra <- "covar.A0.AB"
+		param.sra <- "covarA0.AB"
 		param.mcmc <- "logGA:logUBA.animal"
 	} else {stop()}
+	
 	
 	addtofig <- function(model, param, ...) {
 		name.up <- if(param %in% names(coef(model))) param else paste0(param, ".pos")
 		name.down <- if(param %in% names(coef(model))) param else paste0(param, ".neg")
-		
+				
 		param.up <- coef(model)[name.up]
 		param.down <- coef(model)[name.down]
 		var.up <- model$vcov[name.up,name.up]
@@ -96,8 +96,13 @@ makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", 
 	addtofig(sraCstvar.bivar.asym(datacontrol, Bulmer=TRUE), param.sra, pch=2, col=col.control)
 	
 	if(!is.null(G)) {
-		G.mean <- mean(log(G$G.VCV[,param.mcmc]))
-		G.var <-  var(log(G$G.VCV[,param.mcmc]))
+		if (what=="var") {
+			G.mean <- mean(log(G$G.VCV[,param.mcmc]))
+			G.var <-  var(log(G$G.VCV[,param.mcmc]))
+		} else {
+			G.mean <- mean(G$G.VCV[,param.mcmc])
+			G.var <-  var(G$G.VCV[,param.mcmc])
+		}			
 		points(G.mean, G.mean, pch=19, col=col.G)
 		lines(ellipse(cbind(c(G.var,0),c(0,G.var)), centre=c(G.mean,G.mean), level=0.95), col=col.G)
 	}
@@ -110,8 +115,17 @@ makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", 
 
 pdf("figureS10.pdf", width=5, height=10)
 layout(1:2)
-	makefigS10(summarypop("data/TovarData.txt"), G=get.matrices("Tovar"))
+	makefigS10(summarypop("data/TovarData.txt"), G=get.matrices("Tovar"), xlab="log var(GA) up", ylab="log var(GA) down")
 	title("Tovar")
-	makefigS10(summarypop("data/TulumData.txt"), G=get.matrices("Tulum"))
+	makefigS10(summarypop("data/TulumData.txt"), G=get.matrices("Tulum"), xlab="log var(GA) up", ylab="log var(GA) down")
+	title("Tulum")
+dev.off()
+
+
+pdf("figureS10b.pdf", width=5, height=10)
+layout(1:2)
+	makefigS10(summarypop("data/TovarData.txt"), what="cov", G=get.matrices("Tovar"), xlab="cov(GA,UBA) up", ylab="cov(GA,UBA) down", xylim=c(0,0.01))
+	title("Tovar")
+	makefigS10(summarypop("data/TulumData.txt"), what="cov", G=get.matrices("Tulum"), xlab="cov(GA,UBA) up", ylab="cov(GA,UBA) down", xylim=c(0,0.01))
 	title("Tulum")
 dev.off()
