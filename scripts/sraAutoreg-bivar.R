@@ -145,6 +145,7 @@ sraMakeObject.bivar <- function(sradata, model, start, fixed, FUNtimeseries)
     ans$data <- sradata
     ans$model <- model
     ans$start <- start
+    ans$vcov <- model@vcov
     ans$coefficients <- coef(model)[names(start)]
     # Confidence intervals: approximated from standard errors
     ans$confint <- cbind(summary(ans$model)@coef[,1]-2*summary(ans$model)@coef[,2], 
