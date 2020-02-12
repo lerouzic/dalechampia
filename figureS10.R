@@ -55,7 +55,7 @@ makesradata <- function(dat, centering=c("raw","control", "updown")[1], exclude.
 	ans
 }
 
-makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", col.control="blue", xylim=c(-6.5,-4), xlab="log var(up)", ylab="log var(down)", legend=TRUE) {
+makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", col.control="blue", lty.Ne=2, xylim=c(-6.5,-4), xlab="log var(up)", ylab="log var(down)", legend=TRUE) {
 	
 	dataraw <- makesradata(dat, centering="raw")
 	datacontrol <- makesradata(dat, centering="control")
@@ -89,12 +89,20 @@ makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", 
 	addtofig(sraCstvar.bivar(dataraw, Bulmer=TRUE), param.sra, pch=2, col=col.raw)
 	addtofig(sraCstvar.bivar.asym(dataraw, Bulmer=FALSE), param.sra, pch=1, col=col.raw)
 	addtofig(sraCstvar.bivar.asym(dataraw, Bulmer=TRUE), param.sra, pch=2, col=col.raw)
+	addtofig(sraCstvar.bivar(dataraw, Bulmer=FALSE, start=list(logNe=0)), param.sra, pch=1, col=col.raw, lty=lty.Ne)
+	addtofig(sraCstvar.bivar(dataraw, Bulmer=TRUE, start=list(logNe=0)), param.sra, pch=2, col=col.raw, lty=lty.Ne)
+	addtofig(sraCstvar.bivar.asym(dataraw, Bulmer=FALSE, start=list(logNe=0)), param.sra, pch=1, col=col.raw, lty=lty.Ne)
+	addtofig(sraCstvar.bivar.asym(dataraw, Bulmer=TRUE, start=list(logNe=0)), param.sra, pch=2, col=col.raw, lty=lty.Ne)
 	
 	addtofig(sraCstvar.bivar(datacontrol, Bulmer=FALSE), param.sra, pch=1, col=col.control)
 	addtofig(sraCstvar.bivar(datacontrol, Bulmer=TRUE), param.sra, pch=2, col=col.control)
 	addtofig(sraCstvar.bivar.asym(datacontrol, Bulmer=FALSE), param.sra, pch=1, col=col.control)
 	addtofig(sraCstvar.bivar.asym(datacontrol, Bulmer=TRUE), param.sra, pch=2, col=col.control)
-	
+	addtofig(sraCstvar.bivar(datacontrol, Bulmer=FALSE, start=list(logNe=0)), param.sra, pch=1, col=col.control, lty=lty.Ne)
+	addtofig(sraCstvar.bivar(datacontrol, Bulmer=TRUE, start=list(logNe=0)), param.sra, pch=2, col=col.control, lty=lty.Ne)
+	addtofig(sraCstvar.bivar.asym(datacontrol, Bulmer=FALSE, start=list(logNe=0)), param.sra, pch=1, col=col.control, lty=lty.Ne)
+	addtofig(sraCstvar.bivar.asym(datacontrol, Bulmer=TRUE, start=list(logNe=0)), param.sra, pch=2, col=col.control, lty=lty.Ne)
+		
 	if(!is.null(G)) {
 		if (what=="var") {
 			G.mean <- mean(log(G$G.VCV[,param.mcmc]))
@@ -109,15 +117,17 @@ makefigS10 <- function(dat, what="var", G=NULL, col.G="black", col.raw="green", 
 	abline(b=1, a=0, lty=3, col="gray")
 	
 	if (legend) {
-		legend("bottomright", pch=c(19, 1, 2, 1, 2), col=c(col.G, col.raw, col.raw, col.control, col.control), legend=c("Diallel", "Raw, no Bulmer", "Raw, Bulmer", "Control, no Bulmer", "Control, Bulmer"))
+		legend("bottomright", pch=c(19, 1, 2, 1, 2, NA), col=c(col.G, col.raw, col.raw, col.control, col.control, "darkgray"), lty=c(0,0,0,0,0,lty.Ne), legend=c("Diallel", "Raw, no Bulmer", "Raw, Bulmer", "Control, no Bulmer", "Control, Bulmer", "Ne"))
 	}
+	
+	
 }
 
 pdf("figureS10.pdf", width=5, height=10)
 layout(1:2)
 	makefigS10(summarypop("data/TovarData.txt"), G=get.matrices("Tovar"), xlab="log var(GA) up", ylab="log var(GA) down")
 	title("Tovar")
-	makefigS10(summarypop("data/TulumData.txt"), G=get.matrices("Tulum"), xlab="log var(GA) up", ylab="log var(GA) down")
+	makefigS10(summarypop("data/TulumData.txt"), G=get.matrices("Tulum"), xlab="log var(GA) up", ylab="log var(GA) down", legend=FALSE)
 	title("Tulum")
 dev.off()
 
@@ -126,6 +136,6 @@ pdf("figureS10b.pdf", width=5, height=10)
 layout(1:2)
 	makefigS10(summarypop("data/TovarData.txt"), what="cov", G=get.matrices("Tovar"), xlab="cov(GA,UBA) up", ylab="cov(GA,UBA) down", xylim=c(0,0.01))
 	title("Tovar")
-	makefigS10(summarypop("data/TulumData.txt"), what="cov", G=get.matrices("Tulum"), xlab="cov(GA,UBA) up", ylab="cov(GA,UBA) down", xylim=c(0,0.01))
+	makefigS10(summarypop("data/TulumData.txt"), what="cov", G=get.matrices("Tulum"), xlab="cov(GA,UBA) up", ylab="cov(GA,UBA) down", xylim=c(0,0.01), legend=FALSE)
 	title("Tulum")
 dev.off()
