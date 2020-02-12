@@ -120,10 +120,28 @@ makefigS10 <- function(mod.list, what="var", G=NULL, col.G="black", col="green",
 	abline(b=1, a=0, lty=3, col="gray")
 }
 
+
+makefigS10c <- function(mod.list, what="var.up", ref="asymBD", add=FALSE, ...) {
+	parname <- c(
+		if(what=="var.up" || what=="var.down") "logvarA0.A" else "covarA0.AB",
+		if(what=="var.up") "logvarA0.A.pos" else if (what=="var.down") "logvarA0.A.neg" else if (what=="cov.up") "covarA0.AB.pos" else "covarA0.AB.neg")
+	estimate <- sapply(mod.list, function(mm) coef(mm)[names(coef(mm)) %in% parname])
+	est.var  <- sapply(mod.list, function(mm) mm$vcov[names(coef(mm)) %in% parname,names(coef(mm)) %in% parname])
+	names(estimate) <- names(est.var) <- names(mod.list)
+	if (!add) {
+		plot((estimate-estimate[ref])^2 + est.var, estimate, ...)
+	} else {
+		points((estimate-estimate[ref])^2 + est.var, estimate, ...)
+	}
+	text((estimate-estimate[ref])^2 + est.var, estimate, pos=4, las=2, names(mod.list))
+}
+
+
 mod.raw.tovar <- run.models(makesradata(summarypop("data/TovarData.txt"), centering="raw"))
 mod.control.tovar <- run.models(makesradata(summarypop("data/TovarData.txt"), centering="control"))
 mod.raw.tulum <- run.models(makesradata(summarypop("data/TulumData.txt"), centering="raw"))
 mod.control.tulum <- run.models(makesradata(summarypop("data/TulumData.txt"), centering="control"))
+
 
 col.raw <- "green"
 col.control <- "blue"
@@ -154,3 +172,40 @@ layout(1:2)
 dev.off()
 
 
+pdf("figureS10c.pdf", width=10, height=10)
+layout(rbind(1:2,3:4))
+	par(mar=0.1+c(4,4,3,0), oma=c(0,0,3,0))
+	makefigS10c(mod.raw.tovar, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.control.tovar, what="var.up", col=col.control, add=TRUE)
+	legend("topright", pch=1, col=c(col.raw, col.control), legend=c("Raw", "Control-centered"))
+	
+	makefigS10c(mod.raw.tovar, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.control.tovar, what="var.down", col=col.control, add=TRUE)
+	
+	makefigS10c(mod.raw.tovar, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.control.tovar, what="cov.up", col=col.control, add=TRUE)
+	
+	makefigS10c(mod.raw.tovar, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.control.tovar, what="cov.down", col=col.control, add=TRUE)
+	title("Tovar", outer=TRUE)
+dev.off()
+
+
+
+pdf("figureS10d.pdf", width=10, height=10)
+layout(rbind(1:2,3:4))
+	par(mar=0.1+c(4,4,3,0), oma=c(0,0,3,0))
+	makefigS10c(mod.raw.tulum, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.control.tulum, what="var.up", col=col.control, add=TRUE)
+	legend("topright", pch=1, col=c(col.raw, col.control), legend=c("Raw", "Control-centered"))
+	
+	makefigS10c(mod.raw.tulum, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.control.tulum, what="var.down", col=col.control, add=TRUE)
+	
+	makefigS10c(mod.raw.tulum, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.control.tulum, what="cov.up", col=col.control, add=TRUE)
+	
+	makefigS10c(mod.raw.tulum, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.control.tulum, what="cov.down", col=col.control, add=TRUE)
+	title("Tulum", outer=TRUE)
+dev.off()
