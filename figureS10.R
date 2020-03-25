@@ -121,19 +121,21 @@ makefigS10 <- function(mod.list, what="var", G=NULL, col.G="black", col="green",
 }
 
 
-makefigS10c <- function(mod.list, what="var.up", ref="asymBD", add=FALSE, ...) {
+makefigS10c <- function(mod.list, what="var.up", ref="asymBD", add=FALSE, log="", ...) {
 	parname <- c(
 		if(what=="var.up" || what=="var.down") "logvarA0.A" else "covarA0.AB",
 		if(what=="var.up") "logvarA0.A.pos" else if (what=="var.down") "logvarA0.A.neg" else if (what=="cov.up") "covarA0.AB.pos" else "covarA0.AB.neg")
+	epsilon <- 0
+	if (log=="x") epsilon <- 1e-6
 	estimate <- sapply(mod.list, function(mm) coef(mm)[names(coef(mm)) %in% parname])
 	est.var  <- sapply(mod.list, function(mm) mm$vcov[names(coef(mm)) %in% parname,names(coef(mm)) %in% parname])
 	names(estimate) <- names(est.var) <- names(mod.list)
 	if (!add) {
-		plot((estimate-estimate[ref])^2 + est.var, estimate, ...)
+		plot(epsilon+(estimate-estimate[ref])^2 + est.var, estimate, log=log, ...)
 	} else {
-		points((estimate-estimate[ref])^2 + est.var, estimate, ...)
+		points(epsilon+(estimate-estimate[ref])^2 + est.var, estimate, ...)
 	}
-	text((estimate-estimate[ref])^2 + est.var, estimate, pos=4, las=2, names(mod.list))
+	text(epsilon+(estimate-estimate[ref])^2 + est.var, estimate, pos=4, las=2, names(mod.list))
 }
 
 
@@ -172,20 +174,22 @@ layout(1:2)
 dev.off()
 
 
+xlog <- "x"
+
 pdf("figureS10c.pdf", width=10, height=10)
 layout(rbind(1:2,3:4))
 	par(mar=0.1+c(4,4,3,0), oma=c(0,0,3,0))
-	makefigS10c(mod.raw.tovar, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.raw.tovar, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.7), xlim=c(1e-3,1), log=xlog)
 	makefigS10c(mod.control.tovar, what="var.up", col=col.control, add=TRUE)
 	legend("topright", pch=1, col=c(col.raw, col.control), legend=c("Raw", "Control-centered"))
 	
-	makefigS10c(mod.raw.tovar, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.7), xlim=c(0,1))
+	makefigS10c(mod.raw.tovar, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.7), xlim=c(1e-3,1), log=xlog)
 	makefigS10c(mod.control.tovar, what="var.down", col=col.control, add=TRUE)
 	
-	makefigS10c(mod.raw.tovar, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.raw.tovar, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.006), log=xlog)
 	makefigS10c(mod.control.tovar, what="cov.up", col=col.control, add=TRUE)
 	
-	makefigS10c(mod.raw.tovar, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.006))
+	makefigS10c(mod.raw.tovar, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.006), log=xlog)
 	makefigS10c(mod.control.tovar, what="cov.down", col=col.control, add=TRUE)
 	title("Tovar", outer=TRUE)
 dev.off()
@@ -195,17 +199,17 @@ dev.off()
 pdf("figureS10d.pdf", width=10, height=10)
 layout(rbind(1:2,3:4))
 	par(mar=0.1+c(4,4,3,0), oma=c(0,0,3,0))
-	makefigS10c(mod.raw.tulum, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.4), xlim=c(0,1))
+	makefigS10c(mod.raw.tulum, what="var.up", xlab="bias^2 + var", ylab="log var(GA) up", col=col.raw, ylim=c(-6,-4.4), xlim=c(1e-3,1), log=xlog)
 	makefigS10c(mod.control.tulum, what="var.up", col=col.control, add=TRUE)
 	legend("topright", pch=1, col=c(col.raw, col.control), legend=c("Raw", "Control-centered"))
 	
-	makefigS10c(mod.raw.tulum, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.4), xlim=c(0,1))
+	makefigS10c(mod.raw.tulum, what="var.down", xlab="bias^2 + var",  ylab="log var(GA) down", col=col.raw, ylim=c(-6,-4.4), xlim=c(1e-3,1), log=xlog)
 	makefigS10c(mod.control.tulum, what="var.down", col=col.control, add=TRUE)
 	
-	makefigS10c(mod.raw.tulum, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.003))
+	makefigS10c(mod.raw.tulum, what="cov.up", xlab="bias^2 + var", ylab="cov(GA, UBA) up", col=col.raw, ylim=c(0.001,0.003), log=xlog)
 	makefigS10c(mod.control.tulum, what="cov.up", col=col.control, add=TRUE)
 	
-	makefigS10c(mod.raw.tulum, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.003))
+	makefigS10c(mod.raw.tulum, what="cov.down", xlab="bias^2 + var", ylab="cov(GA, UBA) down", col=col.raw, ylim=c(0.001,0.003), log=xlog)
 	makefigS10c(mod.control.tulum, what="cov.down", col=col.control, add=TRUE)
 	title("Tulum", outer=TRUE)
 dev.off()
