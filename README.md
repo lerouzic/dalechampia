@@ -22,7 +22,6 @@ The table presents, for each generation, in all three lines (Up, Down, Control) 
 
 **Status: reproducible.**  
 
-**Note:** The slope calculated on log traits and the correlation on the original scale. This is the only place in the full manuscript where traits are considered on the original scale. 
 
 ## Figures 2 and 3
 
@@ -32,11 +31,9 @@ Observed vs predicted selection response for focal (up) and correlated (down) tr
 
 ## Table S1 and Table S2
 
-Summary statistics of the results of the selection experiment (table S1 for Tovar, table S2 for Tulum). Summary statistics include: Replicate (Up, Down, Control), Generation (from 1 to 5), average log GA (trait x = selected trait), phenotypic variance in log GA, selection differential for GA, average log UBA (trait y = correlated trait), phenotypic variance in log UBA, phenotypic covariance log GA - log UBA, sample size N, standard errors for the mean trait x and y.  
+Summary statistics of the results of the selection experiment (table S1 for Tovar, table S2 for Tulum). Summary statistics include: Replicate (Up, Down, Control), Generation (from 1 to 5), average log GA (trait x = selected trait), phenotypic variance in log GA, selection differential for GA, difference in phenotypic variance between breeders and the whole population, average log UBA (trait y = correlated trait), phenotypic variance in log UBA, phenotypic covariance log GA - log UBA, sample size N, standard errors for the mean trait x and y.  
 
 **Status: reproducible.**  
-
-**Note:** Selection on variance (difference between the variance among breeders and the variance in the population) is not provided here, although it is necessary for fitting sra models with Bulmer effect. 
 
 ## Figure S8
 

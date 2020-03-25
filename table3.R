@@ -5,7 +5,7 @@
 # The table reports regression slopes between log(UBA) as a response variable and log(GA) as a predictor variable, from a 
 # mixed-effect model including the individual level as a random effect. 
 #
-# The table also reports correlation coefficients (and associated 95% confidence intervals) between GA and UBA (not log!)
+# The table also reports correlation coefficients (and associated 95% confidence intervals) between log GA and log UBA
 
 library(lme4)
 
@@ -35,7 +35,7 @@ cor.df <- function(data) {
 		if (nrow(dd) == 0) {
 			NA
 		} else {
-			cc <- cor.test(dd$GA, dd$UBA)
+			cc <- cor.test(log(dd$GA), log(dd$UBA))
 			c(cc$estimate, cc$conf.int)
 		}})
 	return(cbind(r=sapply(cors[dd.names], "[", 1), CI.low=sapply(cors[dd.names], "[", 2), CI.high=sapply(cors[dd.names], "[", 3)))
