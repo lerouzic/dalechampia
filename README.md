@@ -1,6 +1,4 @@
-# dalechampia
-
-Reproducible analysis for the Dalechampia artificial selection paper
+# Reproducible analysis for the Dalechampia artificial selection paper
 
 
 ## Table 1: Genetic and Phenotypic matrices of variance-covariance
