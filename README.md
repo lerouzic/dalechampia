@@ -1,8 +1,11 @@
 # dalechampia
+
 Reproducible analysis for the Dalechampia artificial selection paper
 
 
-## Table 1: Genetic and Phenotypic matrices of variance-covariance for two traits, log Gland Area (GA) and log Upper Bract Area (UBA) for two populations, Tovar and Tulum. 
+## Table 1: Genetic and Phenotypic matrices of variance-covariance
+
+Two traits, log Gland Area (GA) and log Upper Bract Area (UBA) for two populations, Tovar and Tulum. 
 
 The data comes from a Diallel experiment reported elsewhere (Bolstad et al. 2014). The table reports the G and the P matrices estimated by MCMCglmm from the diallel data. P matrices are the sum of three covariance matrices: genetic (level "animal" in the MCMC model), residual (level "unit" in the model), and individual (level "ind"), as several measurements were provided for each individual. Batch and date effects were not included in the calculation of the P matrix.
 
