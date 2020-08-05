@@ -22,7 +22,9 @@ data.tab1.col2 <- list(tovar$G.VCV[,2], tovar$G.VCV[,4], tovar$P.VCV[,2], tovar$
 
 # note that correlations should not be scaled
 tab1.col1 <- paste0(
-	format(round(rep(c(mf,1), 4)*sapply(data.tab1.col1, median), digits=dd),nsmall=dd), 
+	format(round(rep(c(mf,1), 4)*sapply(data.tab1.col1, mean), digits=dd),nsmall=dd), 
+	" +/-",
+	format(round(rep(c(mf,1), 4)*sapply(data.tab1.col1, sd), digits=dd),nsmall=dd),
 	" (", 
 	format(round(rep(c(mf,1), 4)*sapply(data.tab1.col1, function(x) HPDinterval(x)[1]), digits=dd), nsmall=dd),
 	"; ", 
@@ -30,7 +32,9 @@ tab1.col1 <- paste0(
 	")")
 
 tab1.col2 <- paste0(
-	format(round(mf*sapply(data.tab1.col2, median), digits=dd),nsmall=dd), 
+	format(round(mf*sapply(data.tab1.col2, mean), digits=dd),nsmall=dd), 
+	" +/-",
+	format(round(mf*sapply(data.tab1.col2, sd), digits=dd),nsmall=dd),
 	" (", 
 	format(round(mf*sapply(data.tab1.col2, function(x) HPDinterval(x)[1]), digits=dd), nsmall=dd),
 	"; ", 
