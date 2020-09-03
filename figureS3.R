@@ -50,7 +50,7 @@ drawline <- function(new.data, old.data, trait="x", rep) {
 }
 
 
-pdf("figureS11.pdf", width=8, height=8, useDingbats = FALSE)
+pdf("figureS3.pdf", width=8, height=8, useDingbats = FALSE)
 layout(cbind(1:2,3:4))
 par(mar=c(5, 4.2, 3, 1))
 
