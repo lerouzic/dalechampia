@@ -14,6 +14,7 @@ formatTable <- function(df, digits=3) {
 		'mu.x'=format(round(df$mu.x, digits=digits), nsmall=digits),
 		'sig2.x'=format(round(df$sig2.x, digits=digits), nsmall=digits),
 		'S' = format(round(df$S, digits=digits), nsmall=digits),
+		'deltaV'=format(round(df$deltaV, digits=digits), nsmall=digits),
 		'mu.y'=format(round(df$mu.y, digits=digits), nsmall=digits),
 		'sig2.y'=format(round(df$sig2.y, digits=digits), nsmall=digits),
 		'sig.xy'=format(round(df$sig.xy, digits=digits), nsmall=digits),

@@ -133,7 +133,7 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 
 
 # Plots a single time series
-plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=NULL, CI.factor=1.96, col.line="black", col.point=col.line, col.err=makeTransparent(col.line, alpha=50), pch=1, ...) {
+plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=NULL, CI.factor=1.96, col.line="black", col.point=col.line, col.err=makeTransparent(col.line, alpha=50), pch=1, prediction=TRUE, data.lty=if(prediction) 2 else 1, ...) {
 	# pred: the vector of predicted phenotype
 	# gen : generation numbers (default: 1:5)
 	# verr: vector of prediction error variance
@@ -143,16 +143,17 @@ plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=N
 	# ... graphical line, points, color options
 	
 	# Prediction error (shaded area)
-	if (!is.null(verr)) {
+	if (prediction && !is.null(verr)) {
 		polygon(c(gen, rev(gen)), c(pred-CI.factor*sqrt(verr), rev(pred+CI.factor*sqrt(verr))), 
 		border=NA, col=col.err)
 	}
 	
 	# Prediction (plain line)
-	lines(gen, pred, col=col.line, lwd=3)
+	if (prediction)
+		lines(gen, pred, col=col.line, lwd=3)
 	
 	# Data points
-	points(gen[!is.na(data)], data[!is.na(data)], pch=pch, lty=2, type="b", col=col.point)
+	points(gen[!is.na(data)], data[!is.na(data)], pch=pch, lty=data.lty, type="b", col=col.point)
 	
 	# Data error (error bars)
 	if(!is.null(data.se) && data.se[1] > 0) {
@@ -163,13 +164,13 @@ plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=N
 
 
 # Call the plot routine on the recentered data. 
-plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, ...) {
+plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, prediction=TRUE, ...) {
 
 	if(is.null(ylim)) 
 		ylim <- 0.2*c(-1,1) + range(do.call(c, lapply(data.recenter, function(x) x$phen)), na.rm=TRUE)
 
 	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=ylab, ...)
 	for (ll in c("Control","Up","Down")) {
-		plot.ts.common(data.recenter[[ll]]$pred, data.recenter[[ll]]$gen, data.recenter[[ll]]$verr, data.recenter[[ll]]$phen, data.recenter[[ll]]$se, CI.factor=CI.factor, col.line=col.data[ll])
+		plot.ts.common(data.recenter[[ll]]$pred, data.recenter[[ll]]$gen, data.recenter[[ll]]$verr, data.recenter[[ll]]$phen, data.recenter[[ll]]$se, CI.factor=CI.factor, col.line=col.data[ll], prediction=prediction)
 	}
 }

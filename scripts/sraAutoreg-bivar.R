@@ -145,6 +145,7 @@ sraMakeObject.bivar <- function(sradata, model, start, fixed, FUNtimeseries)
     ans$data <- sradata
     ans$model <- model
     ans$start <- start
+    ans$vcov <- model@vcov
     ans$coefficients <- coef(model)[names(start)]
     # Confidence intervals: approximated from standard errors
     ans$confint <- cbind(summary(ans$model)@coef[,1]-2*summary(ans$model)@coef[,2], 
@@ -283,7 +284,7 @@ sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A))
         vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
         varA.A.tp1 <- vara.A.tp1 + d.A.tp1
-        covarA.tp1 <- covarA[t]
+        covarA.tp1 <- covarA[t] * (1 - 1/(2*Ne))
         
         varE.A.tp1 <- varE.A[t]
         varE.B.tp1 <- varE.B[t]
@@ -384,7 +385,7 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
     
 		vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
-        covarA.tp1 <- covarA[t]
+        covarA.tp1 <- covarA[t] * (1 - 1/(2*Ne))
                 
         varA.A.tp1 <- vara.A.tp1 + d.A.tp1
         varE.A.tp1 <- varE.A[t]
