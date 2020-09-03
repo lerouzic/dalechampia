@@ -27,6 +27,7 @@ get.matrices <- function(pop, scale=c("data", "mcmc")[1]) {
 	indiv.VCV <- grep(colnames(VCV), pattern="ind")
 	
 	G.VCV <- VCV[,genet.VCV]
+	E.VCV <- VCV[,resid.VCV]+VCV[,indiv.VCV]
 	P.VCV <- VCV[,genet.VCV]+VCV[,resid.VCV]+VCV[,indiv.VCV]
 	
 	# In the MCMC procedure, phenotypes are multiplied by 100, and variances by 100*100
@@ -35,8 +36,11 @@ get.matrices <- function(pop, scale=c("data", "mcmc")[1]) {
 	
 	ans <- list(
 		G.VCV = G.VCV*scale.factor,
+		E.VCV = E.VCV*scale.factor,
 		P.VCV = P.VCV*scale.factor,
 		G = matrix(apply(G.VCV*scale.factor, 2, median), ncol=2),
+		E = matrix(apply(E.VCV*scale.factor, 2, median), ncol=2),
 		P = matrix(apply(P.VCV*scale.factor, 2, median), ncol=2),
-		Gv = matrix(apply(G.VCV*scale.factor, 2, var), ncol=2))
+		Gv = matrix(apply(G.VCV*scale.factor, 2, var), ncol=2),
+		Ev = matrix(apply(E.VCV*scale.factor, 2, var), ncol=2))
 }
