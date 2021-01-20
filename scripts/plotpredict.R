@@ -164,12 +164,13 @@ plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=N
 
 
 # Call the plot routine on the recentered data. 
-plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, prediction=TRUE, ...) {
+plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, prediction=TRUE, G0=0, ...) {
 
 	if(is.null(ylim)) 
 		ylim <- 0.2*c(-1,1) + range(do.call(c, lapply(data.recenter, function(x) x$phen)), na.rm=TRUE)
 
-	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=ylab, ...)
+	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=ylab, xaxt="n", ...)
+	axis(1, at=data.recenter$Control$gen, labels=as.character(G0:(G0-1+length(data.recenter$Control$gen))))
 	for (ll in c("Control","Up","Down")) {
 		plot.ts.common(data.recenter[[ll]]$pred, data.recenter[[ll]]$gen, data.recenter[[ll]]$verr, data.recenter[[ll]]$phen, data.recenter[[ll]]$se, CI.factor=CI.factor, col.line=col.data[ll], prediction=prediction)
 	}

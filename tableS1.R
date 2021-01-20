@@ -7,10 +7,12 @@ source("scripts/summarypop.R")
 
 datadir <- "./data"
 
+G0 <- 0
+
 formatTable <- function(df, digits=3) {
 	data.frame(
 		'Rep.'=as.character(df$Rep),
-		'Gen.'=as.character(df$Gen),
+		'Gen.'=as.character(df$Gen-1+G0),
 		'mu.x'=format(round(df$mu.x, digits=digits), nsmall=digits),
 		'sig2.x'=format(round(df$sig2.x, digits=digits), nsmall=digits),
 		'S' = format(round(df$S, digits=digits), nsmall=digits),
@@ -27,5 +29,5 @@ formatTable <- function(df, digits=3) {
 tovar.df <- summarypop(paste(datadir, "TovarData.txt", sep="/"))
 tulum.df <- summarypop(paste(datadir, "TulumData.txt", sep="/"))
 
-write.table(formatTable(tovar.df), file="tableS1.txt", quote=FALSE, sep="\t", na="-")
-write.table(formatTable(tulum.df), file="tableS2.txt", quote=FALSE, sep="\t", na="-")
+write.table(formatTable(tovar.df), file="tableS1.txt", row.names=FALSE, quote=FALSE, sep="\t", na="-")
+write.table(formatTable(tulum.df), file="tableS2.txt", row.names=FALSE, quote=FALSE, sep="\t", na="-")

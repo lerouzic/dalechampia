@@ -54,26 +54,32 @@ pdf("figureS3.pdf", width=8, height=8, useDingbats = FALSE)
 layout(cbind(1:2,3:4))
 par(mar=c(5, 4.2, 3, 1))
 
-plot(NULL, xlim=c(1,5), ylim=c(2.4,3.2), xlab="Generations", ylab=expression("log GA (mm"^2*")"))
+G0 <- 0
+
+plot(NULL, xlim=c(1,5), ylim=c(2.4,3.2), xlab="Generations", ylab=expression("log GA (mm"^2*")"), xaxt="n")
 drawline(tovar, tovar.old, "x", "Control")
 drawline(tovar, tovar.old, "x", "Up")
 drawline(tovar, tovar.old, "x", "Down")
 title("Tovar")
+axis(1, at=order(unique(tovar$Gen)), labels=as.character(G0:(G0-1+max(tovar$Gen))))
 
-plot(NULL, xlim=c(1,5), ylim=c(5.6, 6.3), xlab="Generations", ylab=expression("log UBA (mm"^2*")"))
+plot(NULL, xlim=c(1,5), ylim=c(5.6, 6.3), xlab="Generations", ylab=expression("log UBA (mm"^2*")"), xaxt="n")
 drawline(tovar, tovar.old, "y", "Control")
 drawline(tovar, tovar.old, "y", "Up")
 drawline(tovar, tovar.old, "y", "Down")
+axis(1, at=order(unique(tovar$Gen)), labels=as.character(G0:(G0-1+max(tovar$Gen))))
 
-plot(NULL, xlim=c(1,5), ylim=c(2.9,3.5), xlab="Generations", ylab=expression("log GA (mm"^2*")"))
+plot(NULL, xlim=c(1,5), ylim=c(2.9,3.5), xlab="Generations", ylab=expression("log GA (mm"^2*")"), xaxt="n")
 drawline(tulum, tulum.old, "x", "Control")
 drawline(tulum, tulum.old, "x", "Up")
 drawline(tulum, tulum.old, "x", "Down")
 title("Tulum")
+axis(1, at=order(unique(tovar$Gen)), labels=as.character(G0:(G0-1+max(tovar$Gen))))
 
-plot(NULL, xlim=c(1,5), ylim=c(5.9,6.5), xlab="Generations", ylab=expression("log UBA (mm"^2*")"))
+plot(NULL, xlim=c(1,5), ylim=c(5.9,6.5), xlab="Generations", ylab=expression("log UBA (mm"^2*")"), xaxt="n")
 drawline(tulum, tulum.old, "y", "Control")
 drawline(tulum, tulum.old, "y", "Up")
 drawline(tulum, tulum.old, "y", "Down")
+axis(1, at=order(unique(tovar$Gen)), labels=as.character(G0:(G0-1+max(tovar$Gen))))
 
 dev.off()
