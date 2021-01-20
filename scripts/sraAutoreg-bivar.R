@@ -255,7 +255,8 @@ sraAutoregMinuslogL.bivar <- function(X.mean, X.var, Y.mean, Y.var, XY.cov, data
 
 sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A)), delta.B = rep(0, length(beta.B)), 
 	mu0.A=0, mu0.B=0, logvarA0.A=0, 
-	logvarE0.A=0, logvarE0.B=0, covarA0.AB=0, logNe=log(100))
+	logvarE0.A=0, logvarE0.B=0, covarA0.AB=0, logNe=log(100), 
+	G0.boost=FALSE)
 	# Produces a theoretical time series from a set of parameters, and selection strengths (selection on the means --beta--
 	# and the variances --delta--)
 {
@@ -277,9 +278,10 @@ sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A))
 
     for (t in 1:(length(beta.A)))
     {
+        V.correct <- if (G0.boost && t == 1) 1.5 else 1
         # Lande's equations
-        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t]) # + covarA[t] * beta.B[t] : assuming beta.B = 0
-        mu.B <- c(mu.B, mu.B[t] + covarA[t] * beta.A[t]) # + varA.B[t] * beta.B[t]
+        mu.A <- c(mu.A, mu.A[t] + V.correct * varA.A[t] * beta.A[t]) # + covarA[t] * beta.B[t] : assuming beta.B = 0
+        mu.B <- c(mu.B, mu.B[t] + V.correct * covarA[t] * beta.A[t]) # + varA.B[t] * beta.B[t]
     
         vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
@@ -328,7 +330,7 @@ sraTimeseries.bivar <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A))
 }
 
 sraCstvar.bivar <-function (sradata, start = NULL, fixed = NULL, 
-          Bulmer = TRUE, ...) 
+          Bulmer = TRUE, G0.boost=FALSE,...) 
 {
   if (!Bulmer) {
     sradata$sel.X.var <- sradata$phen.X.var
@@ -349,7 +351,7 @@ sraCstvar.bivar <-function (sradata, start = NULL, fixed = NULL,
     sraMinuslogL.bivar(sradata = sradata, FUNtimeseries = sraTimeseries.bivar, 
                  mu0.A = mu0.A, mu0.B = mu0.B, logvarA0.A = logvarA0.A,
                  logvarE0.A = logvarE0.A, logvarE0.B = logvarE0.B, covarA0.AB = covarA0.AB,
-                 logNe = logNe)
+                 logNe = logNe, G0.boost=G0.boost)
   }
   fit <- mle(minuslogl = mlewrapper, start = start, fixed = fixed, 
              ...)
@@ -362,7 +364,8 @@ sraCstvar.bivar <-function (sradata, start = NULL, fixed = NULL,
 
 sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(beta.A)), delta.B = rep(0, length(beta.B)), 
 	mu0.A=0, mu0.B=0, logvarA0.A.pos=0, logvarA0.A.neg=0,
-	logvarE0.A=0, logvarE0.B=0, covarA0.AB.pos=0, covarA0.AB.neg=0, logNe=log(100))
+	logvarE0.A=0, logvarE0.B=0, covarA0.AB.pos=0, covarA0.AB.neg=0, logNe=log(100),
+	G0.boost=FALSE)
 {   # Almost the same than for symmetric response, the difference lies in the initial parameter names
     ans <- list()
     
@@ -379,9 +382,10 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
     
     for (t in 1:(length(beta.A)))
     {
+        V.correct <- if (G0.boost && t == 1) 1.5 else 1
         # Lande's equations
-        mu.A <- c(mu.A, mu.A[t] + varA.A[t] * beta.A[t])
-        mu.B <- c(mu.B, mu.B[t] + covarA[t] * beta.A[t])
+        mu.A <- c(mu.A, mu.A[t] + V.correct * varA.A[t] * beta.A[t])
+        mu.B <- c(mu.B, mu.B[t] + V.correct * covarA[t] * beta.A[t])
     
 		vara.A.tp1 <- vara.A[t] * (1 - 1/(2*Ne))
         d.A.tp1 <- 0.5*(1-1/Ne)*(d.A[t]+delta.A[t]*(varA.A[t]**2)/(varA.A[t]+varE.A[t]))
@@ -429,7 +433,7 @@ sraTimeseries.bivar.asym <- function(beta.A, beta.B, delta.A = rep(0, length(bet
 }
 
 sraCstvar.bivar.asym <-function (sradata, start = NULL, fixed = NULL, 
-          Bulmer = TRUE, ...) 
+          Bulmer = TRUE, G0.boost=FALSE, ...) 
 {
   if (!Bulmer) {
     sradata$sel.X.var <- sradata$phen.X.var
@@ -452,7 +456,7 @@ sraCstvar.bivar.asym <-function (sradata, start = NULL, fixed = NULL,
                  logvarA0.A.pos = logvarA0.A.pos, logvarA0.A.neg = logvarA0.A.neg,
                  logvarE0.A = logvarE0.A, logvarE0.B = logvarE0.B, 
                  covarA0.AB.pos = covarA0.AB.pos, covarA0.AB.neg = covarA0.AB.neg, 
-                 logNe = logNe)
+                 logNe = logNe, G0.boost=G0.boost)
   }
   fit <- mle(minuslogl = mlewrapper, start = start, fixed = fixed, 
              ...)

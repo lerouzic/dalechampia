@@ -49,8 +49,8 @@ tulum <- summarypop("data/TulumData.txt")
 
 data.recenter.tovar.GA <- recenter(tovar, G=tovar.mat$G, Gv=tovar.mat$Gv, P=tovar.mat$P, N=64, Np=12, target="mu.x", normalization="raw")
 data.recenter.tovar.UBA <- recenter(tovar, G=tovar.mat$G, Gv=tovar.mat$Gv, P=tovar.mat$P, N=64, Np=12, target="mu.y", normalization="raw")
-data.recenter.tulum.GA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.x", normalization="raw")
-data.recenter.tulum.UBA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.y", normalization="raw")
+data.recenter.tulum.GA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.x", normalization="raw", G0.boost=TRUE)
+data.recenter.tulum.UBA <- recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.y", normalization="raw", G0.boost=TRUE)
 
 mult <- 10000
 

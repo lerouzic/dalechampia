@@ -27,10 +27,10 @@ plot.data.recenter(
 	main="", ylab=expression("log UBA (mm"^2*")"), xlab="Generation", ylim=c(-0.3,0.3), CI.factor=CI.factor)
 par(mar=c(3, 4.2, 3, 1))
 plot.data.recenter(
-	recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.x", normalization="control"),
+	recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.x", normalization="control", G0.boost=TRUE),
 	main="Tulum", ylab="", xlab="", ylim=c(-0.4,0.4), CI.factor=CI.factor)
 par(mar=c(5, 4.2, 1, 1))
 plot.data.recenter(
-	recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.y", normalization="control"),
+	recenter(tulum, G=tulum.mat$G, Gv=tulum.mat$Gv, P=tulum.mat$P, N=64, Np=12, target="mu.y", normalization="control", G0.boost=TRUE),
 	main="", ylab="", xlab="Generation", ylim=c(-0.3,0.3), CI.factor=CI.factor)
 dev.off()

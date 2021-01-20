@@ -9,6 +9,8 @@
 
 library(lme4)
 
+G0 <- 0
+
 dd.names <- c("P.Parent", paste0("F", 1:4, ".Up"), "P.Parent", paste0("F", 1:4, ".Down"), "P.Parent", paste0("F", 1:4, ".Ran"))
 
 slope.df <- function(data) {
@@ -47,14 +49,14 @@ format.table <- function(slopes, cors, digits=2) {
 	rr <- paste0(format(round(cors[,1], digits=digits), nsmall=digits), " (", format(round(cors[,2],digits=digits), nsmall=digits), "; ", format(round(cors[,3],digits=digits), nsmall=digits), ")")
 	
 	mm <- cbind(bb[1:5], rr[1:5], bb[6:10], rr[6:10], bb[11:15], rr[11:15])
-	rownames(mm) <- as.character(1:5) # c("Parents", paste0("F", 1:4))
+	rownames(mm) <- as.character(G0:(G0+4)) # c("Parents", paste0("F", 1:4))
 	mm
 }
 
 tovar.raw <- read.table("./data/TovarData.txt", header=TRUE)
 tulum.raw <- read.table("./data/TulumData.txt", header=TRUE)
 
-cat("\tUp-selected lines\t\tDown-selected lines\t\tControl\t\n", file="table3.txt")
+cat("\tUp-selected lines\t\tDown-selected lines\t\tControl\t\n", file="table4.txt")
 cat("\tβ (±SE)\tr (95% CI)\tβ (±SE)\tr (95% CI)\tβ (±SE)\tr (95% CI)\n", file="table4.txt", append=TRUE)
 cat("Tovar\n", file="table4.txt", append=TRUE)
 write.table(format.table(slope.df(tovar.raw), cor.df(tovar.raw)), file="table4.txt", col.names=FALSE, quote=FALSE, sep="\t", append=TRUE)

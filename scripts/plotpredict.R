@@ -15,7 +15,7 @@ makeTransparent<-function(someColor, alpha=100)
 # * raw:               phenotype as observed experimentally
 # * control-centered:  phenotype centered on the control line
 # * updown-centered:   phenotype centered on the average between up and down selection lines (symmetric response)
-recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw", "control", "updown")[1]) {
+recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw", "control", "updown")[1], G0.boost=FALSE) {
 	# data:          summary statistics (from summarypop script)
 	# G:             G matrix
 	# Gv:            Estimated variance of each element of the G matrix
@@ -23,6 +23,7 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 	# N:             Number of individuals measured
 	# Np:            Number of selected parents
 	# target:        Either "mu.x" (selected trait) or "mu.y" (correlated trait)
+	# G0.boost:      Whether the G matrix at the first generation should be x1.5 due to inbreeding
 	
 	stopifnot(target %in% c("mu.x", "mu.y"))
 	stopifnot(normalization %in% c("raw","control","updown"))
@@ -42,19 +43,21 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 	mean.beta   <- mean(abs(beta[data$Rep=="Up" | data$Rep == "Down"]), na.rm=TRUE)
 	
 	gen <- seq(1, max(data$Gen))
+	G.correct <- rep(1, length(gen))
+	if (G0.boost) G.correct[1] <- 1.5
 	
 	pred.control <- 
 		if (normalization == "raw") { rep(data[data$Rep=="Control" & data$Gen == 1, target], length(gen)) }
 		else if (normalization == "control") { rep(0, length(gen) ) }
-		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Down"] + beta[data$Rep=="Up"]))[-length(gen)]*Gsel) }
+		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Down"] + beta[data$Rep=="Up"]))[-length(gen)]*Gsel*G.correct[-length(gen)]) }
 	pred.up <- 
-		if (normalization == "raw") { data[data$Rep=="Up" & data$Gen == 1, target] + c(0, cumsum(beta[data$Rep=="Up"])[-length(gen)]*Gsel) }
-		else if (normalization == "control") { c(0, cumsum(beta[data$Rep=="Up"])[-length(gen)]*Gsel) }
-		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Up"] - beta[data$Rep=="Down"]))[-length(gen)]*Gsel) }
+		if (normalization == "raw") { data[data$Rep=="Up" & data$Gen == 1, target] + c(0, cumsum(beta[data$Rep=="Up"])[-length(gen)]*Gsel*G.correct[-length(gen)]) }
+		else if (normalization == "control") { c(0, cumsum(beta[data$Rep=="Up"])[-length(gen)]*Gsel*G.correct[-length(gen)]) }
+		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Up"] - beta[data$Rep=="Down"]))[-length(gen)]*Gsel*G.correct[-length(gen)]) }
 	pred.down <- 
-		if (normalization == "raw") { data[data$Rep=="Down" & data$Gen == 1, target] + c(0, cumsum(beta[data$Rep=="Down"])[-length(gen)]*Gsel) }
-		else if (normalization == "control") { c(0, cumsum(beta[data$Rep=="Down"])[-length(gen)]*Gsel) }
-		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Down"] - beta[data$Rep=="Up"]))[-length(gen)]*Gsel) }
+		if (normalization == "raw") { data[data$Rep=="Down" & data$Gen == 1, target] + c(0, cumsum(beta[data$Rep=="Down"])[-length(gen)]*Gsel*G.correct[-length(gen)]) }
+		else if (normalization == "control") { c(0, cumsum(beta[data$Rep=="Down"])[-length(gen)]*Gsel*G.correct[-length(gen)]) }
+		else if (normalization == "updown") { c(0, cumsum(0.5*(beta[data$Rep=="Down"] - beta[data$Rep=="Up"]))[-length(gen)]*Gsel*G.correct[-length(gen)]) }
 
 	# Calculation of prediction variances
 	# Three terms : environmental sampling error + drift + error in the additive variance estimate
@@ -76,8 +79,8 @@ recenter <- function(data, G, Gv, P, N, Np, target="mu.x", normalization=c("raw"
 	tmp.X2 <- erf(tmp.X - tmp.H)
 	varW           <- (N^2-2*Np^2)/(2*Np^2) - ((N^2-Np^2)/(2*Np^2))*tmp.X1 - 0.5*tmp.X2
 	
-	verr.drift     <- Gdrift*(gen-1)*(1/Np - 1/(2*N))
-	verr.drift.sel <- Gdrift*(gen-1)*(1/Np - 1/(2*N) - varW/N)
+	verr.drift     <- Gdrift*G.correct*(gen-1)*(1/Np - 1/(2*N))
+	verr.drift.sel <- Gdrift*G.correct*(gen-1)*(1/Np - 1/(2*N) - varW/N)
 	verr.va        <- Gerr * (gen-1)^2 * mean.beta^2
 	verr.env       <- Eerr/N
 	

@@ -50,16 +50,16 @@ makesradata <- function(dat, centering=c("raw","control", "updown")[1], exclude.
 	ans
 }
 
-maketable2 <- function(dat, CI.method=c("none", "vcov", "profile")[1]) {
+maketable2 <- function(dat, CI.method=c("none", "vcov", "profile")[1], G0.boost=FALSE) {
 	
 	dataraw <- makesradata(dat, centering="raw")
 	datacontrol <- makesradata(dat, centering="control")
 	
 	modsel <- function(data) {
-		symnobul <- sraCstvar.bivar(data, Bulmer=FALSE)
-		symbul   <- sraCstvar.bivar(data, Bulmer=TRUE)
-		asymnobul<- sraCstvar.bivar.asym(data, Bulmer=FALSE)
-		asymbul  <- sraCstvar.bivar.asym(data, Bulmer=TRUE)
+		symnobul <- sraCstvar.bivar(data, Bulmer=FALSE, G0.boost=G0.boost)
+		symbul   <- sraCstvar.bivar(data, Bulmer=TRUE, G0.boost=G0.boost)
+		asymnobul<- sraCstvar.bivar.asym(data, Bulmer=FALSE, G0.boost=G0.boost)
+		asymbul  <- sraCstvar.bivar.asym(data, Bulmer=TRUE, G0.boost=G0.boost)
 		
 		AICc   <- c(AICc.SRA(symnobul), AICc.SRA(symbul), AICc.SRA(asymnobul), NA, NA, AICc.SRA(asymbul), NA, NA)
 		VA <- c(coef(symnobul)["logvarA0.A"], coef(symbul)["logvarA0.A"], NA, coef(asymnobul)["logvarA0.A.pos"], coef(asymnobul)["logvarA0.A.neg"], NA, coef(asymbul)["logvarA0.A.pos"], coef(asymbul)["logvarA0.A.neg"])
@@ -99,4 +99,4 @@ maketable2 <- function(dat, CI.method=c("none", "vcov", "profile")[1]) {
 cat("Tovar\n", file="table3.txt")
 write.table(maketable2(summarypop("data/TovarData.txt"), CI.method="vcov"), file="table3.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
 cat("Tulum\n", file="table3.txt", append=TRUE)
-write.table(maketable2(summarypop("data/TulumData.txt"), CI.method="vcov"), file="table3.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
+write.table(maketable2(summarypop("data/TulumData.txt"), CI.method="vcov", G0.boost=TRUE), file="table3.txt", append=TRUE, quote=FALSE, row.names=FALSE, sep="\t")
