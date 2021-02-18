@@ -5,17 +5,19 @@
 datadir <- "./data"
 
 # the way to collect the data is not entirely clean. The chain is 
-# stored in two files for each population, that are stored in a "mod"
-# variable in independent R sessions. 
+# stored in one or several Rdata files for each population.
+# Chains are in a "mod" variable in independent R sessions. 
 
 get.VCV <- function(pop) {
 	library(coda) # for as.mcmc
 
-	load(paste0(datadir, "/", pop, "_logUBA_logGA_times100_1.RData"))
-	VCV.part1 <- mod
-	load(paste0(datadir, "/", pop, "_logUBA_logGA_times100_2.RData"))
-	VCV.part2 <- mod
-	return(as.mcmc(rbind(VCV.part1$VCV, VCV.part2$VCV)))
+	ans <- NULL
+	for (chainfile in list.files(path=datadir, pattern=paste0(pop, "_.*\\.RData$"), full=TRUE)) {
+		load(chainfile)
+		ans <- rbind(ans, mod$VCV)
+		rm("mod")
+	}
+	return(as.mcmc(ans))
 }
 
 
