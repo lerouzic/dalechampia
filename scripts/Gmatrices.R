@@ -8,11 +8,12 @@ datadir <- "./data"
 # stored in one or several Rdata files for each population.
 # Chains are in a "mod" variable in independent R sessions. 
 
-get.VCV <- function(pop) {
+get.VCV <- function(pop, excluding.self=FALSE) {
 	library(coda) # for as.mcmc
 
 	ans <- NULL
-	for (chainfile in list.files(path=datadir, pattern=paste0(pop, "_.*\\.RData$"), full=TRUE)) {
+	MCMC.files <- list.files(path=datadir, pattern=paste0(pop, "_MCMC", if (excluding.self) "_excludingself" else "", "\\.RData$"), full=TRUE)
+	for (chainfile in MCMC.files) {
 		load(chainfile)
 		ans <- rbind(ans, mod$VCV)
 		rm("mod")
@@ -21,8 +22,8 @@ get.VCV <- function(pop) {
 }
 
 
-get.matrices <- function(pop, scale=c("data", "mcmc")[1]) {
-	VCV <- get.VCV(pop)
+get.matrices <- function(pop, scale=c("data", "mcmc")[1], excluding.self=FALSE) {
+	VCV <- get.VCV(pop, excluding.self=excluding.self)
 	
 	genet.VCV <- grep(colnames(VCV), pattern="animal")
 	resid.VCV <- grep(colnames(VCV), pattern="units")
