@@ -21,7 +21,7 @@ for (pop in c("Tovar", "Tulum")) {
 	full   <- full[,genet.VCV]
 	exself <- exself[,genet.VCV]
 	
-	plot(NULL, xlim=c(-1,1)*2.5*sqrt(max(full[,1])), ylim=c(-1,1)*2.5*sqrt(max(full[,4])), xlab="log GA x 100", ylab="log UBA x 100", main=pop)
+	plot(NULL, xlim=c(-35,35), ylim=c(-35,35), xlab="log GA x 100", ylab="log UBA x 100", main=pop)
 	
 	for (i in 1:nrow(full))
 		lines(ellipse(matrix(full[i,], ncol=2)), col=makeTransparent(cols["full"], transp))
@@ -30,6 +30,9 @@ for (pop in c("Tovar", "Tulum")) {
 	
 	lines(ellipse(matrix((colMeans(full)), ncol=2)), col=cols["full"], lwd=3)
 	lines(ellipse(matrix((colMeans(exself)), ncol=2)), col=cols["exself"], lwd=3)
+	
+	if (pop=="Tovar") 
+		legend("topleft", lty=1, col=cols, legend=c("Full data", "W/o self"), lwd=3)
 }
 
 dev.off()
