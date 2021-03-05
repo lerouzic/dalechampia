@@ -14,7 +14,7 @@ lty.old <- 3
 lty.new <- 2
 
 std.err <- TRUE
-std.err.factor <- 1
+std.err.factor <- 2
 
 tovar.mat <- get.matrices("Tovar")
 tulum.mat <- get.matrices("Tulum")

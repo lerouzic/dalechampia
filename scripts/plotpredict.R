@@ -160,7 +160,7 @@ plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=N
 	
 	# Data error (error bars)
 	if(!is.null(data.se) && data.se[1] > 0) {
-		arrows(x0=gen, y0=data-data.se, y1=data+data.se,
+		arrows(x0=gen, y0=data-CI.factor*data.se, y1=data+CI.factor*data.se,
 	length=0.1, angle=90, code=3, col=col.point)
 	}
 }
