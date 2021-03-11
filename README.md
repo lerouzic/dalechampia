@@ -32,7 +32,7 @@ The table presents, for each generation, in all three lines (Up, Down, Control) 
 
 ## Figures 3 and 4
 
-Observed vs predicted selection response for focal (up) and correlated (down) traits, and for Tovar (left) and Tulum (right) populations. Figure 2 is up-down centered, while figure 3 is control-centered. Centering affects mean phenotype, phenotypic standard errors, and prediction errors. The formula for prediction error is a bit complicated, described in table S9 below. 
+Observed vs predicted selection response for focal (up) and correlated (down) traits, and for Tovar (left) and Tulum (right) populations. Figure 2 is up-down centered, while figure 3 is control-centered. Centering affects mean phenotype, phenotypic standard errors, and prediction errors. The formula for prediction error is described in table S3 below. 
 
 **Status: reproducible.**  
 
@@ -76,4 +76,10 @@ Now the variance is redistributed in all lines. Not straightforward, as drift is
 * Control line, error = 3/2 V1 + V2 + 1/2 V3
 * Selected lines: error = 1/2 V1 + 1/2 V2 + V3
 
-**Note**: a similar (but simpler) calculation had to be made to distribute the phenotypic standard errors across the three lines.
+**Note**: a similar calculation had to be made to distribute the phenotypic standard errors across the three lines.
+
+## Figure S6
+
+Variance-Covariance ellipses (assuming a multivariate normal distribution, ellipses standing for the 95% region) of G matrix estimates from the diallel experiment. Light lines correspond to 1000 iterations of the MCMC chain, thick lines represent the mean posterior.
+
+**Status: not totally reproducible**, as for table 1. 
