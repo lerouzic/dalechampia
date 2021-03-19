@@ -7,9 +7,13 @@ library(ellipse)
 
 datadir <- "./data"
 cols    <- c(Tovar="blue", Tulum="darkorange")
-ltys    <- c(full=1, exself=3)
+ltys    <- c(full=1, exself=2)
 transp  <- 5
 
+logGA.lim <- c(2.6,3.6)
+logUBA.lim <- c(5.5,6.5)
+
+axis.type <- "natural" # "log"
 
 df <- list(
 		Tovar = summarypop(paste(datadir, "TovarData.txt", sep="/")),
@@ -22,7 +26,10 @@ pdf("figureS6.pdf", width=5, height=5)
 
 par(mar=c(4.5, 4.5 ,1, 1))
 
-plot(NULL, xlim=c(2.6,3.6), ylim=c(5.5,6.5), xlab=expression("log GA (mm"^2*")"), ylab=expression("log UBA (mm"^2*")"), asp=1)
+plot(NULL, xlim=logGA.lim, ylim=logUBA.lim, xlab=custom.label("GA", axis.type), ylab=custom.label("UBA", axis.type), asp=1, xaxt="n", yaxt="n")
+custom.axis(1, logGA.lim,  axis.type)
+custom.axis(2, logUBA.lim, axis.type)
+
 
 for (pop in c("Tovar", "Tulum")) {
 	load(paste0("./data/", pop, "_MCMC.RData"))

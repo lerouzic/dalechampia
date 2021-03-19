@@ -10,6 +10,44 @@ makeTransparent<-function(someColor, alpha=100)
 	apply(newColor, 2, function(curcoldata){rgb(red=curcoldata[1], green=curcoldata[2], blue=curcoldata[3],alpha=alpha, maxColorValue=255)})
 }
 
+custom.axis <- function(side, loglim, type=c("log", "natural", "percent0", "percent100")[1]) {
+	lim <- loglim
+	if (type == "natural") {
+		lim <- exp(loglim)
+	} else if (type == "percent0") {
+		lim <- exp(loglim)*100 - 100
+	} else if (type == "percent100") {
+		lim <- exp(loglim)*100
+	}
+
+	lab <- pretty(lim)
+	at  <- if (type == "log") {
+			lab 
+		} else if (type == "natural") {
+			log(lab)
+		} else if (type == "percent0") {
+			log((lab+100)/100)
+		} else if (type == "percent100") {
+			log(lab/100)
+		}
+	lab.string <- as.character(lab)
+	if (type == "percent0")
+		lab.string <- ifelse(lab > 0, paste0("+", lab.string), paste0(lab.string))
+	if (type == "percent100")
+		lab.string <- paste0(lab.string)
+	axis(side, at=at, lab.string)
+}
+
+custom.label <- function(trait, type=c("log", "natural", "percent0", "percent100")[1]) {
+	if (type == "natural") {
+		bquote(.(trait)*" (mm"^2*")")
+	} else if (type == "log") {
+		bquote("log "*.(trait)*" (mm"^2*")")
+	} else if (type == "percent0" || type == "percent100") {
+		bquote(.(trait)*"(%)")
+	}
+}
+
 # Estimate means and variances in raw and centered datasets
 # Three ways to analyse the data:
 # * raw:               phenotype as observed experimentally
@@ -167,13 +205,14 @@ plot.ts.common <- function(pred, gen=seq_along(pred), verr=NULL, data, data.se=N
 
 
 # Call the plot routine on the recentered data. 
-plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, prediction=TRUE, G0=0, ...) {
+plot.data.recenter <- function(data.recenter, col.data=c(Control="gray50", Up="black", Down="black"), pch=18, CI.factor=1.96,  ylab="Phenotype", xlab="Generations", ylim=NULL, prediction=TRUE, G0=0, axis.type="log", ...) {
 
 	if(is.null(ylim)) 
 		ylim <- 0.2*c(-1,1) + range(do.call(c, lapply(data.recenter, function(x) x$phen)), na.rm=TRUE)
 
-	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=ylab, xaxt="n", ...)
+	plot(NULL, xlim=range(data.recenter$Control$gen), ylim=ylim, xlab=xlab, ylab=if(ylab == "") "" else custom.label(ylab, axis.type), xaxt="n", yaxt="n", ...)
 	axis(1, at=data.recenter$Control$gen, labels=as.character(G0:(G0-1+length(data.recenter$Control$gen))))
+	custom.axis(2, ylim, axis.type)
 	for (ll in c("Control","Up","Down")) {
 		plot.ts.common(data.recenter[[ll]]$pred, data.recenter[[ll]]$gen, data.recenter[[ll]]$verr, data.recenter[[ll]]$phen, data.recenter[[ll]]$se, CI.factor=CI.factor, col.line=col.data[ll], prediction=prediction)
 	}
